@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+import click
 import pandas as pd
 from sqlalchemy import create_engine
 from tqdm.auto import tqdm
-
-
 
 dtype = {
     "VendorID": "Int64",
@@ -31,22 +30,24 @@ parse_dates = [
     "tpep_dropoff_datetime"
 ]
 
-def run():
-    year = 2021
-    month = 1
+@click.command()
+@click.option('--year', default=2021, help='Year of the data')
+@click.option('--month', default=1, help='Month of the data')
+@click.option('--user', default='root', help='PostgreSQL user')
+@click.option('--password', default='root', help='PostgreSQL password')
+@click.option('--host', default='localhost', help='PostgreSQL host')
+@click.option('--port', default=5432, help='PostgreSQL port')
+@click.option('--db', default='ny_taxi', help='PostgreSQL database name')
+@click.option('--table', default='yellow_taxi_data', help='Target table name')
+@click.option('--chunksize', default=100000, help='Chunk size for reading CSV')
 
-    pg_user = 'root'
-    pg_pass = 'root'
-    pg_port = 5432
-    target_table = 'ny_taxi'
-    pg_host = 'localhost'
-
-    chunksize = 100000
+def run(year, month, user, password, host, port, db, table, chunksize):
+    """Ingest NYC taxi data into PostgreSQL database."""
 
     prefix = 'https://github.com/DataTalksClub/nyc-tlc-data/releases/download/yellow/'
     url = prefix + f'yellow_tripdata_{year}-{month:02d}.csv.gz'
 
-    engine = create_engine(f'postgresql://{pg_user}:{pg_pass}@{pg_host}:{pg_port}/{target_table}')
+    engine = create_engine(f'postgresql://{user}:{password}@{host}:{port}/{db}')
 
     df_iter = pd.read_csv(
         url,
@@ -63,7 +64,7 @@ def run():
         if first:
             # Create table schema (no data)
             df_chunk.head(0).to_sql(
-                name="yellow_taxi_data",
+                name=table,
                 con=engine,
                 if_exists="replace"
             )
@@ -72,7 +73,7 @@ def run():
 
         # Insert chunk
         df_chunk.to_sql(
-            name="yellow_taxi_data",
+            name=table,
             con=engine,
             if_exists="append"
         )
