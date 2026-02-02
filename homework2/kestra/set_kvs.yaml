@@ -6,7 +6,7 @@ tasks:
   - id: set_project_id
     type: io.kestra.plugin.core.kv.Set
     key: GCP_PROJECT_ID
-    value: ny-taxi-485717
+    value: data-engineering-course-486123
     namespace: ingestion
     overwrite: true
 
@@ -20,14 +20,14 @@ tasks:
   - id: set_bucket_name
     type: io.kestra.plugin.core.kv.Set
     key: GCP_BUCKET_NAME
-    value: ny-taxi-485717-bucket
+    value: data-engineering-course-486123-homework2-bucket
     namespace: ingestion
     overwrite: true
 
   - id: set_dataset
     type: io.kestra.plugin.core.kv.Set
     key: GCP_DATASET
-    value: ny_taxi_data
+    value: ny_taxi_dataset
     namespace: ingestion
     overwrite: true
 

@@ -21,4 +21,6 @@ This directory contains the files for Homework 2.
    - `region`: GCP region
    - `zone`: GCP zone
 4. Update the `GCP_PROJECT_ID`, `GCP_LOCATION`, and `GCP_BUCKET_NAME` and `GCP_DATASET` names in the docker-compose.yml to match the values in `homework2/terraform/variables.tf`
-5. Run `make start` from the `homework2/` directory to initialize Terraform and create the GCP resources.
+5. Update the `homework2/kestra/run_backfills.sh` script with the desired backfill date range.
+6. Update `homework2/kestra/set_kvs.yaml` with the correct GCP project ID, dataset, and bucket names.
+7. Run `make start` from the `homework2/` directory to initialize Terraform and create the GCP resources.

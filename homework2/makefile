@@ -10,9 +10,8 @@ start:
 	@echo "Initializing Terraform..."
 	@cd terraform && terraform init
 	@echo "Applying Terraform configuration..."
-	@terraform apply -auto-approve
+	@cd terraform && terraform apply -auto-approve
 	@echo "✅ Infrastructure is set up!"
-	@cd ..
 	@echo "Starting Docker Compose..."
 	@docker compose up -d
 	@echo "✅ Services started!"
@@ -25,14 +24,15 @@ start:
 	@echo "Setting keys in Kestra..."
 	@bash kestra/run_set_kvs.sh
 	@echo "Uploading gcp_taxi flow to Kestra..."
-	@bash kestra/run_gcp_taxi.sh
+	@bash kestra/upload_gcp_taxi.sh
 	@echo "✅ gcp_taxi flow uploaded!"
 	@echo "Files are now being uploaded to GCP... This may take a few minutes."
-	@bash kestra/run_backfills.sh
+	@bash kestra/run_backfills_green.sh
+	@bash kestra/run_backfills_yellow.sh
 
 check:
 # Check if last execution was successful and print the execution file name
-	@bash check_last_execution.sh
+	@bash kestra/check_last_execution.sh
 
 stop:
 	@docker compose down

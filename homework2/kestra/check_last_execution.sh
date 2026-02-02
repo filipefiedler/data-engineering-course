@@ -12,6 +12,9 @@ echo "Last processed file: $FILE"
 STATE=$(echo "$LAST_EXECUTION" | jq -r '.state.current')
 if [ "$STATE" != "SUCCESS" ]; then
   echo "Last execution state is not SUCCESS. Please check the execution logs."
+# If it is RUNNING, we also want to notify
+elif [ "$STATE" == "RUNNING" ]; then
+  echo "Last execution is still RUNNING. Please wait for it to complete."
 else
   echo "Last execution was successful."
 fi
