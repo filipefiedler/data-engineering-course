@@ -1,0 +1,48 @@
+id: answer_homework_questions
+namespace: ingestion
+
+tasks:
+  - id: question_3
+    type: io.kestra.plugin.gcp.bigquery.Query
+    fetchType: FETCH_ONE
+    sql: |
+      SELECT
+      FORMAT_DATE('%Y', DATE(tpep_pickup_datetime)) AS year,
+      COUNT(*) AS row_count
+      FROM `data-engineering-course-486123.ny_taxi_dataset.yellow_tripdata`
+      WHERE EXTRACT(YEAR FROM DATE(tpep_pickup_datetime)) = 2020
+      GROUP BY year;
+
+  - id: question_4
+    type: io.kestra.plugin.gcp.bigquery.Query
+    fetchType: FETCH_ONE
+    sql: |
+      SELECT
+      FORMAT_DATE('%Y', DATE(lpep_pickup_datetime)) AS year,
+      COUNT(*) AS row_count
+      FROM `data-engineering-course-486123.ny_taxi_dataset.green_tripdata`
+      WHERE EXTRACT(YEAR FROM DATE(lpep_pickup_datetime)) = 2020
+      GROUP BY year;
+      
+  - id: question_5
+    type: io.kestra.plugin.gcp.bigquery.Query
+    fetchType: FETCH_ONE
+    sql: |
+      WITH monthly AS (
+        SELECT
+          FORMAT_DATE('%Y-%m', DATE(tpep_pickup_datetime)) AS year_month,
+          COUNT(*) AS row_count
+        FROM `data-engineering-course-486123.ny_taxi_dataset.yellow_taxi_trips`
+        GROUP BY 1
+      )
+      SELECT row_count
+      FROM monthly
+      WHERE year_month = '2021-03';
+
+
+pluginDefaults:
+  - type: io.kestra.plugin.gcp
+    values:
+      projectId: "{{kv('GCP_PROJECT_ID')}}"
+      location: "{{kv('GCP_LOCATION')}}"
+      bucket: "{{kv('GCP_BUCKET_NAME')}}"
