@@ -1,0 +1,43 @@
+id: gcp_taxi_ingestion_hw3
+namespace: ingestion_homework3
+description: |
+  Add Yellow Taxi Trip Records for January 2024 - June 2024 from https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page
+
+variables:
+  taxi: "yellow"
+
+tasks:
+  - id: process_months
+    type: io.kestra.plugin.core.flow.EachSequential
+    value: ['2024-01', '2024-02', '2024-03', '2024-04', '2024-05', '2024-06']
+    tasks:
+      - id: set_label
+        type: io.kestra.plugin.core.execution.Labels
+        labels:
+          file: "{{vars.taxi}}_tripdata_{{taskrun.value}}.parquet"
+          taxi: "{{vars.taxi}}"
+
+      - id: extract
+        type: io.kestra.plugin.scripts.shell.Commands
+        outputFiles:
+          - "*.parquet"
+        taskRunner:
+          type: io.kestra.plugin.core.runner.Process
+        commands:
+          - wget -q https://d37ci6vzurychx.cloudfront.net/trip-data/{{vars.taxi}}_tripdata_{{taskrun.value}}.parquet
+
+      - id: upload_to_gcs
+        type: io.kestra.plugin.gcp.gcs.Upload
+        from: "{{ outputs.extract[taskrun.value].outputFiles[vars.taxi ~ '_tripdata_' ~ taskrun.value ~ '.parquet'] }}"
+        to: "gs://{{kv('GCP_BUCKET_NAME')}}/{{vars.taxi}}_tripdata_{{taskrun.value}}.parquet"
+
+      - id: purge_files
+        type: io.kestra.plugin.core.storage.PurgeCurrentExecutionFiles
+        description: To avoid cluttering your storage, we will remove the downloaded files
+
+pluginDefaults:
+  - type: io.kestra.plugin.gcp
+    values:
+      projectId: "{{kv('GCP_PROJECT_ID')}}"
+      location: "{{kv('GCP_LOCATION')}}"
+      bucket: "{{kv('GCP_BUCKET_NAME')}}"

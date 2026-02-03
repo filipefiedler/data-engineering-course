@@ -1,5 +1,5 @@
 
-# Homework 3 – Data Engineering Workflow on GCP with Kestra
+# Homework 2 – Data Engineering Workflow on GCP with Kestra
 
 This project demonstrates a data engineering workflow using [Kestra](https://kestra.io/) for orchestration and [Google Cloud Platform (GCP)](https://cloud.google.com/) for data storage and processing. The repository provides infrastructure-as-code setup with Terraform, workflow definitions for Kestra, and utility scripts to automate data ingestion and management.
 
@@ -29,7 +29,6 @@ This project demonstrates a data engineering workflow using [Kestra](https://kes
 
 4. **Update Environment Variables:**
    - Edit `docker-compose.yaml` to match your GCP project, region, bucket, and dataset names.
-   - Edit `kestra/set_kvs.yaml` with your GCP project ID, dataset, and bucket.
 
 5. **Configure Workflow Scripts:**
    - Update `kestra/run_backfills.sh` for your desired backfill date range.
@@ -38,7 +37,7 @@ This project demonstrates a data engineering workflow using [Kestra](https://kes
 6. **Initialize Infrastructure:**
    - Run `make start` from the `homework2/` directory to initialize Terraform and create GCP resources.
 
-7. **Show Quiz Answers:**
+5. **Show Quiz Answers:**
    - Run `make answers` after the homework flows have completed.
    - The answers to the quiz questions will appear directly in the command prompt after running this command.
 
