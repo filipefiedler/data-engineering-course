@@ -13,6 +13,7 @@ This project demonstrates a data engineering workflow using [Kestra](https://kes
 - **makefile**: Automation for setup and workflow execution.
 
 ## Setup Instructions
+Disclaimer: The instructions below assume you have a GCP account and that you are going to use Github Codespaces for this homework. Adjust accordingly if using a different environment.
 
 1. **Create GCP Service Accounts:**
    - `terraform-sa`: For Terraform resource creation (BigQuery Admin, Storage Admin, Compute Admin).
@@ -24,21 +25,19 @@ This project demonstrates a data engineering workflow using [Kestra](https://kes
      - `GCP_TERRAFORM_KEY`: Key for `terraform-sa`
      - `GCP_KESTRA_KEY`: Key for `kestra-sa`
 
-3. **Configure Terraform Variables:**
+3. **Update GCP Variables:**
    - Edit `terraform/variables.tf` to set your GCP `project_id`, `region`, and `zone`.
-
-4. **Update Environment Variables:**
    - Edit `docker-compose.yaml` to match your GCP project, region, bucket, and dataset names.
    - Edit `kestra/set_kvs.yaml` with your GCP project ID, dataset, and bucket.
 
-5. **Configure Workflow Scripts:**
+4. **Configure Workflow Scripts:**
    - Update `kestra/run_backfills.sh` for your desired backfill date range.
    - Edit `kestra/set_kvs.yaml` with your GCP project ID, dataset, and bucket.
 
-6. **Initialize Infrastructure:**
+5. **Initialize Infrastructure:**
    - Run `make start` from the `homework2/` directory to initialize Terraform and create GCP resources.
 
-7. **Show Quiz Answers:**
+6. **Show Quiz Answers:**
    - Run `make answers` after the homework flows have completed.
    - The answers to the quiz questions will appear directly in the command prompt after running this command.
 
