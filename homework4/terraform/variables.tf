@@ -36,3 +36,8 @@ variable "gcs_storage_class" {
     description = "Bucket Storage Class"
     default     = "STANDARD"
 }
+
+variable "dbt_dataset_name" {
+    description = "My dbt BigQuery Dataset Name"
+    default     = "dbt_filipefiedler"
+}

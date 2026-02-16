@@ -10,21 +10,8 @@
   )
 }}
 
-with source_jan_aug as (
-    -- Months 1-8 (Jan-Aug) with one schema
+with source as (
     select * from {{ source('raw', 'green_tripdata') }}
-),
-
-source_sep_dec as (
-    -- Months 9-12 (Sep-Dec) with different schema
-    select * from {{ source('raw', 'green_tripdata_q4') }}
-),
-
--- Union both sources
-combined_source as (
-    select * from source_jan_aug
-    union all
-    select * from source_sep_dec
 ),
 
 renamed as (
@@ -55,9 +42,11 @@ renamed as (
         {{ safe_cast('improvement_surcharge', 'numeric') }} as improvement_surcharge,
         {{ safe_cast('total_amount', 'numeric') }} as total_amount,
         {{ safe_cast('payment_type', 'integer') }} as payment_type
-    from combined_source
+    from source
     -- Filter out records with null vendor_id (data quality requirement)
     where vendorid is not null
 )
 
 select * from renamed
+-- Filter to only 2019-2020 data (homework scope)
+where extract(year from pickup_datetime) between 2019 and 2020

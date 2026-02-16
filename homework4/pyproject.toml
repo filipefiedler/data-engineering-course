@@ -7,4 +7,6 @@ requires-python = ">=3.12"
 dependencies = [
     "dbt-bigquery>=1.11.0",
     "dbt-core>=1.11.3",
+    "google-cloud-bigquery>=3.28.0",
+    "python-dotenv>=1.0.0",
 ]

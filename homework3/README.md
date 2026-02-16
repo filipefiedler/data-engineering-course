@@ -22,8 +22,8 @@ Disclaimer: The instructions below assume you have a GCP account and that you ar
 2. **Download and Configure Keys:**
    - Download JSON key files for both service accounts.
    - Set them as workspace secrets:
-     - `GCP_TERRAFORM_KEY`: Key for `terraform-sa`
-     - `GCP_KESTRA_KEY`: Key for `kestra-sa`
+     - `GCP_CREDENTIALS_TERRAFORM`: Key for `terraform-sa`
+     - `GCP_CREDENTIALS_KESTRA`: Key for `kestra-sa`
 
 3. **Update GCP Variables:**
    - Edit `terraform/variables.tf` to set your GCP `project_id`, `region`, and `zone`.

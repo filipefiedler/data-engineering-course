@@ -1,4 +1,4 @@
-.PHONY: start check stop restart logs clean sync-all sync-terraform sync-kestra sync-dbt sync-profiles load-data run-dbt pipeline ingest-data full-pipeline
+.PHONY: start check stop restart logs clean sync-all sync-terraform sync-kestra sync-dbt sync-profiles run-dbt pipeline ingest-data full-pipeline
 
 # Configuration sync targets
 sync-all:
@@ -36,25 +36,18 @@ start:
 	@cd terraform && terraform apply -auto-approve
 	@echo "✅ Infrastructure is set up!"
 
-load-data:
-	@echo "Loading taxi data into BigQuery..."
-	@python load_data_to_bq.py
-	@echo "Loading green taxi Q4 data..."
-	@python load_green_q4.py
-	@echo "✅ All data loaded!"
-
 run-dbt:
 	@echo "Running dbt models..."
-	@cd ny_taxi && dbt run
+	@cd ny_taxi && dbt run --full-refresh
 	@echo "✅ dbt models built!"
 
-pipeline: start load-data run-dbt
+pipeline: start ingest-data run-dbt
 	@echo "================================================"
 	@echo "✅ Complete pipeline executed successfully!"
 	@echo "================================================"
 	@echo ""
 	@echo "Infrastructure: ✅ Created (Terraform)"
-	@echo "Data Loading:   ✅ Completed (BigQuery)"
+	@echo "Data Ingestion: ✅ Completed (CSV to BigQuery via Kestra)"
 	@echo "dbt Models:     ✅ Built"
 	@echo ""
 	@echo "Next steps:"
@@ -65,7 +58,7 @@ pipeline: start load-data run-dbt
 
 ingest-data: start
 	@echo "================================================"
-	@echo "Starting data ingestion to GCS using Kestra..."
+	@echo "Starting data ingestion to BigQuery via Kestra..."
 	@echo "================================================"
 	@echo "Starting Docker Compose..."
 	@docker compose up -d
@@ -78,29 +71,39 @@ ingest-data: start
 	@echo "✅ Kestra is ready!"
 	@echo "Setting keys in Kestra..."
 	@bash kestra/run_set_kvs.sh
-	@echo "Uploading gcp_taxi flow to Kestra..."
+	@echo "Uploading ingest_data flow to Kestra..."
 	@bash kestra/run_ingest_data.sh
-	@echo "Starting backfills for Yellow and Green taxis (2019-2020)..."
+	@echo "Starting backfills for Yellow, Green, and FHV taxis..."
 	@bash kestra/run_backfill_all.sh
 	@echo "================================================"
 	@echo "✅ Data ingestion started!"
 	@echo "================================================"
 	@echo ""
+	@echo "Files to process:"
+	@echo "  - Yellow taxi (2019-2020): 24 months"
+	@echo "  - Green taxi (2019-2020):  24 months"
+	@echo "  - FHV taxi (2019 only):    12 months"
+	@echo "  - Total: 60 CSV files"
+	@echo ""
 	@echo "Check Kestra UI at http://localhost:8080 to monitor progress"
 	@echo "Credentials: admin@kestra.io / Admin1234"
 	@echo ""
-	@echo "Once ingestion is complete, run: make load-data"
+	@echo "Once ingestion is complete, run: make run-dbt"
 	@echo "================================================"
 
-full-pipeline: ingest-data load-data run-dbt
+full-pipeline: ingest-data run-dbt
 	@echo "================================================"
-	@echo "✅ Complete pipeline executed successfully!"
+	@echo "✅ Full pipeline executed successfully!"
 	@echo "================================================"
 	@echo ""
 	@echo "Infrastructure: ✅ Created (Terraform)"
-	@echo "Data Ingestion: ✅ Completed (to GCS via Kestra)"
-	@echo "Data Loading:   ✅ Completed (to BigQuery)"
+	@echo "Data Ingestion: ✅ Completed (CSV to BigQuery via Kestra)"
 	@echo "dbt Models:     ✅ Built"
+	@echo ""
+	@echo "Data Summary:"
+	@echo "  - Yellow taxi (2019-2020): ~109M trips"
+	@echo "  - Green taxi (2019-2020):  ~8M trips"
+	@echo "  - FHV taxi (2019):         TBD"
 	@echo ""
 	@echo "Next steps:"
 	@echo "  - Query tables in BigQuery"

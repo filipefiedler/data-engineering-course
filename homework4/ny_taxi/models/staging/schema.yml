@@ -48,6 +48,31 @@ models:
       - name: payment_type
         description: Payment method code (1=Credit card, 2=Cash, 3=No charge, 4=Dispute, 5=Unknown, 6=Voided)
 
+  - name: stg_fhv_tripdata
+    description: >
+      Staging model for For-Hire Vehicle (FHV) trip data. This model standardizes column names
+      and data types from the raw fhv_tripdata source, providing a clean foundation
+      for downstream transformations. FHV includes app-based services like Uber and Lyft.
+    columns:
+      - name: dispatching_base_num
+        description: TLC Base License Number of the base that dispatched the trip
+        data_tests:
+          - not_null
+      - name: affiliated_base_number
+        description: Base number affiliated with the dispatching base
+      - name: pickup_location_id
+        description: TLC Taxi Zone in which the trip began
+      - name: dropoff_location_id
+        description: TLC Taxi Zone in which the trip ended
+      - name: pickup_datetime
+        description: Date and time of the trip pick-up
+        data_tests:
+          - not_null
+      - name: dropoff_datetime
+        description: Date and time of the trip dropoff
+      - name: sr_flag
+        description: Indicates if the trip was a part of a shared ride chain (nullable field with frequent missing values)
+
   - name: stg_yellow_tripdata
     description: >
       Staging model for yellow taxi trip data. This model standardizes column names

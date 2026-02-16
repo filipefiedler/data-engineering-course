@@ -47,3 +47,5 @@ renamed as (
 )
 
 select * from renamed
+-- Filter to only 2019-2020 data (homework scope)
+where extract(year from pickup_datetime) between 2019 and 2020

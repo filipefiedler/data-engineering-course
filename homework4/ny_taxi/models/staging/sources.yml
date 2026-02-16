@@ -49,17 +49,6 @@ sources:
           - name: ehail_fee
             description: E-hail fee
 
-      - name: green_tripdata_q4
-        description: Raw green taxi trip records for Q4 2019 (Sep-Dec) - separate table due to schema differences
-        loaded_at_field: lpep_pickup_datetime
-        columns:
-          - name: vendorid
-            description: "Taxi technology provider (1 = Creative Mobile Technologies, 2 = VeriFone Inc.)"
-          - name: lpep_pickup_datetime
-            description: Date and time when the meter was engaged
-          - name: lpep_dropoff_datetime
-            description: Date and time when the meter was disengaged
-
       - name: yellow_tripdata
         description: Raw yellow taxi trip records
         loaded_at_field: tpep_pickup_datetime
@@ -98,4 +87,23 @@ sources:
             description: Improvement surcharge
           - name: total_amount
             description: Total amount charged
+
+      - name: fhv_tripdata
+        description: Raw For-Hire Vehicle (FHV) trip records
+        loaded_at_field: pickup_datetime
+        columns:
+          - name: dispatching_base_num
+            description: TLC Base License Number of the base that dispatched the trip
+          - name: pickup_datetime
+            description: Date and time of the trip pick-up
+          - name: dropOff_datetime
+            description: Date and time of the trip dropoff
+          - name: PUlocationID
+            description: TLC Taxi Zone in which the trip began
+          - name: DOlocationID
+            description: TLC Taxi Zone in which the trip ended
+          - name: SR_Flag
+            description: Indicates if the trip was a part of a shared ride chain
+          - name: Affiliated_base_number
+            description: Base number affiliated with the dispatching base
     
