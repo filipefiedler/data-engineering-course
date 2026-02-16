@@ -31,6 +31,20 @@ clean-targets:         # directories to be removed by `dbt clean`
 # files using the `{{ config(...) }}` macro.
 models:
   ny_taxi:
+    # Staging models: materialize as tables for better performance
+    staging:
+      +materialized: table
+      +location: us-central1
+    
+    # Intermediate models: views for flexibility
+    intermediate:
+      +materialized: view
+    
+    # Marts: tables for production use
+    marts:
+      +materialized: table
+      +location: us-central1
+    
     # Config indicated by + and applies to all files under models/example/
     example:
       +materialized: view

@@ -1,3 +1,15 @@
+{{
+  config(
+    materialized='table',
+    partition_by={
+      "field": "pickup_datetime",
+      "data_type": "timestamp",
+      "granularity": "day"
+    },
+    cluster_by=["vendor_id", "pickup_location_id"]
+  )
+}}
+
 with source as (
     select * from {{ source('raw', 'yellow_tripdata') }}
 ),
@@ -5,10 +17,10 @@ with source as (
 renamed as (
     select
         -- identifiers (standardized naming for consistency across yellow/green)
-        cast(vendorid as integer) as vendor_id,
+        {{ safe_cast('vendorid', 'integer') }} as vendor_id,
         {{ safe_cast('ratecodeid', 'integer') }} as rate_code_id,
-        cast(pulocationid as integer) as pickup_location_id,
-        cast(dolocationid as integer) as dropoff_location_id,
+        {{ safe_cast('pulocationid', 'integer') }} as pickup_location_id,
+        {{ safe_cast('dolocationid', 'integer') }} as dropoff_location_id,
 
         -- timestamps (standardized naming)
         cast(tpep_pickup_datetime as timestamp) as pickup_datetime,  -- tpep = Taxicab Passenger Enhancement Program (yellow taxis)
@@ -16,17 +28,17 @@ renamed as (
 
         -- trip info
         cast(store_and_fwd_flag as string) as store_and_fwd_flag,
-        cast(passenger_count as integer) as passenger_count,
-        cast(trip_distance as numeric) as trip_distance,
+        {{ safe_cast('passenger_count', 'integer') }} as passenger_count,
+        {{ safe_cast('trip_distance', 'numeric') }} as trip_distance,
 
         -- payment info
-        cast(fare_amount as numeric) as fare_amount,
-        cast(extra as numeric) as extra,
-        cast(mta_tax as numeric) as mta_tax,
-        cast(tip_amount as numeric) as tip_amount,
-        cast(tolls_amount as numeric) as tolls_amount,
-        cast(improvement_surcharge as numeric) as improvement_surcharge,
-        cast(total_amount as numeric) as total_amount,
+        {{ safe_cast('fare_amount', 'numeric') }} as fare_amount,
+        {{ safe_cast('extra', 'numeric') }} as extra,
+        {{ safe_cast('mta_tax', 'numeric') }} as mta_tax,
+        {{ safe_cast('tip_amount', 'numeric') }} as tip_amount,
+        {{ safe_cast('tolls_amount', 'numeric') }} as tolls_amount,
+        {{ safe_cast('improvement_surcharge', 'numeric') }} as improvement_surcharge,
+        {{ safe_cast('total_amount', 'numeric') }} as total_amount,
         {{ safe_cast('payment_type', 'integer') }} as payment_type
 
     from source
