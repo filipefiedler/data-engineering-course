@@ -1,0 +1,16 @@
+{
+  "name": "pyspark-notebook",
+  "build": { "dockerfile": "../Dockerfile" },
+  "workspaceFolder": "/home/jovyan/work",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode-remote.remote-containers",
+        "ms-python.python",
+        "ms-toolsai.jupyter"
+      ]
+    }
+  },
+  "forwardPorts": [8888],
+  "postStartCommand": "jupyter lab --ip=0.0.0.0 --port=8888 --no-browser"
+}

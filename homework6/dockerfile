@@ -1,0 +1,27 @@
+# Use the official Jupyter image that already includes Spark + PySpark
+FROM jupyter/pyspark-notebook:latest
+
+# (Optional) Switch to root to install OS packages
+USER root
+
+# Example: install OS deps (keep minimal; remove if you don't need them)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+ && rm -rf /var/lib/apt/lists/*
+
+# Switch back to the default non-root user used by Jupyter images
+USER ${NB_UID}
+
+# (Optional) Install Python packages you commonly use
+# Add/remove as needed
+RUN pip install --no-cache-dir \
+    pandas \
+    pyarrow \
+    matplotlib \
+    scikit-learn
+
+# Set a working directory inside the container
+WORKDIR /home/jovyan/work
+
+# Expose Jupyter port (informational; docker run -p controls it)
+EXPOSE 8888
